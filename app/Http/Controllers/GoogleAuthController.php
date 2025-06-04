@@ -13,7 +13,7 @@ use App\Models\RefreshToken;
 class GoogleAuthController extends Controller
 {
     // ✅ متغير ثابت يمكن تغييره بسهولة
-    private $url_page = "https://react-front-end-six.vercel.app";
+    public $url_page = "https://react-front-end-six.vercel.app";
 
     public function redirectToGoogle()
     {
