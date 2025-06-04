@@ -38,8 +38,7 @@ class GoogleAuthController extends Controller
             ]);
         } else {
             if ($user->is_google_account !== true) {
-                $frontendUrl = env('FRONTEND_URL', 'http://localhost:3000');
-                return redirect()->away("$frontendUrl/google-error?reason=not_google_account");
+                return redirect()->away("https://adel31dz.netlify.app/google-error?reason=not_google_account");
             }
         }
 
@@ -54,12 +53,10 @@ class GoogleAuthController extends Controller
             ]
         );
 
-        $frontendUrl = env('FRONTEND_URL', 'http://localhost:3000');
-        return redirect()->away("$frontendUrl/google-success?access_token=$accessToken&refresh_token=$plainRefreshToken");
+        return redirect()->away("https://adel31dz.netlify.app/google-success?access_token=$accessToken&refresh_token=$plainRefreshToken");
 
     } catch (\Exception $e) {
-        $frontendUrl = env('FRONTEND_URL', 'http://localhost:3000');
-        return redirect()->away("$frontendUrl/google-error?reason=Google_CallBack_Failed");
+        return redirect()->away("https://adel31dz.netlify.app/google-error?reason=Google_CallBack_Failed");
     }
 }
 
