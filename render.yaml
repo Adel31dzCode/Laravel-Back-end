@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: laravel-backend
+    env: docker
+    region: oregon         # أو غيّر حسب المنطقة التي اخترتها
+    plan: free             # يمكنك تغييرها لـ starter/pro إذا أردت موارد أكثر
+    branch: main           # غيّرها إذا كنت تعمل على فرع مختلف
+    autoDeploy: true       # اختياري، لتفعيل النشر التلقائي عند كل Push
+
+    envVars:
+      - key: APP_ENV
+        value: production
+
+      - key: APP_KEY
+        generateValue: true  # Render ينشئ قيمة تلقائية، ويمكن تغييره لاحقًا
+
+      - key: APP_URL
+        value: https://YOUR-SERVICE-NAME.onrender.com
+
+      - key: DB_CONNECTION
+        value: pgsql
+
+      - key: DB_HOST
+        value: dpg-xxxx        # ✳️ أدخل الـ internal hostname لقاعدة بياناتك من Render
+
+      - key: DB_PORT
+        value: 5432
+
+      - key: DB_DATABASE
+        value: render_m8je     # ✳️ اسم قاعدة البيانات كما في Render
+
+      - key: DB_USERNAME
+        value: root            # أو اسم المستخدم من Render DB
+
+      - key: DB_PASSWORD
+        value: YOUR_DB_PASSWORD  # ✳️ كلمة مرور قاعدة البيانات
+
+      # اختيارية حسب إعدادات Laravel:
+      - key: CACHE_DRIVER
+        value: file
+
+      - key: SESSION_DRIVER
+        value: file
+
+      - key: LOG_CHANNEL
+        value: stack
