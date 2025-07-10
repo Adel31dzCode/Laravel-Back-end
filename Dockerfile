@@ -1,27 +1,39 @@
-FROM php:8.2-apache
+# المرحلة الأولى: بناء أصول Vite
+FROM node:20 AS node-builder
 
-RUN apt-get update && apt-get install -y \
-    git unzip zip libzip-dev libpng-dev libjpeg-dev libfreetype6-dev \
-    && docker-php-ext-configure zip \
-    && docker-php-ext-install pdo_mysql zip
+WORKDIR /app
 
-RUN a2enmod rewrite
-
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
-RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /etc/apache2/sites-available/000-default.conf
-
-WORKDIR /var/www/html
+COPY package*.json ./
+RUN yarn install
 
 COPY . .
+RUN yarn build
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# المرحلة الثانية: إعداد Laravel
+FROM php:8.2-fpm
+
+# تثبيت المتطلبات
+RUN apt-get update && apt-get install -y \
+    zip unzip curl git libpng-dev libonig-dev libxml2-dev libpq-dev \
+    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
+
+# تثبيت Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www
+
+COPY --from=node-builder /app /var/www
 
 RUN composer install --no-dev --optimize-autoloader
 
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage
+# نسخ ملفات الأصول المبنية
+COPY --from=node-builder /app/public/build /var/www/public/build
 
-EXPOSE 80
+# إعطاء صلاحيات للمجلدات
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-CMD ["apache2-foreground"]
+# نسخ ملف الإعداد لتشغيل Laravel
+COPY ./docker/start.sh /start.sh
+RUN chmod +x /start.sh
+
+CMD ["/start.sh"]
