@@ -16,7 +16,9 @@ COPY --chown=www-data:www-data . /var/www
 RUN chmod -R 755 /var/www
 RUN composer install
 
-COPY .env.example .env
+# ✅ هذا السطر الجديد يتحقق إذا كان .env.example موجود، وينسخه، أو يتجاوزه بصمت
+RUN [ -f .env.example ] && cp .env.example .env || echo ".env.example not found, skipping"
+
 RUN php artisan key:generate
 
 EXPOSE 8000
