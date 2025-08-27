@@ -1,4 +1,4 @@
-name: Deploy to laravel254.wuaze.com
+name: Deploy to laravel-app.wuaze.com
 
 on:
   workflow_dispatch:
