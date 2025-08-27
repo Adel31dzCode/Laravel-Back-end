@@ -1,0 +1,22 @@
+name: Deploy to laravel254.wuaze.com
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to laravel254.wuaze.com
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get latest code
+        uses: actions/checkout@v2
+
+      - name: Sync files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@4.3.5
+        with:
+          server: ftpupload.net # Change if using another host
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /htdocs/ # Replace with your correct path
+          local-dir: ./ # Defaults to ./htdocs/
+          log-level: standard
